@@ -23,7 +23,11 @@ import React from 'react';
 // // const analytics = getAnalytics(app);
 
 function App() {
-  return <div className='bg-green-600 h-full'></div>;
+  return (
+    <div style={{ height: '100px' }} className='bg-green-600'>
+      <h2>test</h2>
+    </div>
+  );
 }
 
 export default App;
