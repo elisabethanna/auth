@@ -17,10 +17,10 @@ function App() {
     measurementId: 'G-JRQKCPEX4R'
   };
   firebase.initializeApp(firebaseConfig);
-  const auth = getAuth();
 
   const [mail, setMail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   // createUserWithEmailAndPassword(auth, 'aaa@aaa.se', 'psw123')
   //   .then(userCredential => {
@@ -46,7 +46,7 @@ function App() {
     signInWithEmailAndPassword(auth, mail, password)
       .then(userCredential => {
         const user = userCredential.user;
-        console.log(user);
+        setLoggedIn(true);
       })
       .catch(error => {
         const errorCode = error.code;
@@ -56,32 +56,36 @@ function App() {
 
   return (
     <div className='bg-yellow-900	opacity-50 min-h-screen flex items-center justify-center '>
-      <div>
-        <h1 className='text-white text-center mb-10 sm:mb-20'>
-          Welcome to Anna's wonderland
-        </h1>
-        <div className='h-1/2 w-3/4 flex flex-col border-2 rounded-3xl px-8 py-10 sm:py-20 m-auto'>
-          <p className='text-white text-lg'>Login</p>
-          <input
-            className='h-8 rounded-3xl p-4 my-2'
-            placeholder='mail'
-            onChange={handleMailInput}
-          />
-          <input
-            className='h-8 rounded-3xl p-4 my-2'
-            placeholder='password'
-            onChange={handlePasswordInput}
-          />
-          <div className='flex w-full justify-end'>
-            <button
-              className='bg-white font-bold w-max px-4 rounded-3xl border-2 text-yellow-900'
-              onClick={handleLogin}
-            >
-              Log in
-            </button>
+      {loggedIn ? (
+        <h1>logged in</h1>
+      ) : (
+        <div>
+          <h1 className='text-white text-center mb-10 sm:mb-20'>
+            Welcome to Anna's wonderland
+          </h1>
+          <div className='h-1/2 w-3/4 flex flex-col border-2 rounded-3xl px-8 py-10 sm:py-20 m-auto'>
+            <p className='text-white text-lg'>Login</p>
+            <input
+              className='h-8 rounded-3xl p-4 my-2'
+              placeholder='mail'
+              onChange={handleMailInput}
+            />
+            <input
+              className='h-8 rounded-3xl p-4 my-2'
+              placeholder='password'
+              onChange={handlePasswordInput}
+            />
+            <div className='flex w-full justify-end'>
+              <button
+                className='bg-white font-bold w-max px-4 rounded-3xl border-2 text-yellow-900'
+                onClick={handleLogin}
+              >
+                Log in
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
