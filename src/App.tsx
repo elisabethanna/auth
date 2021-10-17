@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import firebase from 'firebase/compat/app'
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth'
+import { getAuth } from 'firebase/auth'
+import { AccountPage } from './AccountPage'
+import { LoadingIcon } from './assets/LoadingIcon'
+import { machine } from './machine'
+import { useMachine } from '@xstate/react'
+import { LogInView } from './LogInView'
+import { SignUpView } from './SignUpView'
 
 function App() {
   const firebaseConfig = {
@@ -18,86 +20,33 @@ function App() {
   }
   firebase.initializeApp(firebaseConfig)
   const auth = getAuth()
-
-  const [mail, setMail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-
-  const [loggedIn, setLoggedIn] = useState<boolean>(false)
-
-  // createUserWithEmailAndPassword(auth, 'aaa@aaa.se', 'psw123')
-  //   .then(userCredential => {
-  //     // Signed in
-  //     const user = userCredential.user;
-  //     console.log(user);
-  //     // ...
-  //   })
-  //   .catch(error => {
-  //     const errorCode = error.code;
-  //     const errorMessage = error.message;
-  //     // ..
-  //   });
-
-  const handleMailInput = (e: React.FormEvent<HTMLInputElement>) =>
-    setMail(e.currentTarget.value)
-
-  const handlePasswordInput = (e: React.FormEvent<HTMLInputElement>) =>
-    setPassword(e.currentTarget.value)
-
-  const handleLogin = () => {
-    signInWithEmailAndPassword(auth, mail, password)
-      .then((userCredential) => {
-        const user = userCredential.user
-      })
-      .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-      })
-  }
+  const [state, send] = useMachine(machine(auth))
 
   useEffect(() => {
-    console.log(auth.currentUser)
-
     auth!.onAuthStateChanged((user) => {
       if (user) {
-        setLoggedIn(true)
+        send({ type: 'GO_TO_IDLE' })
       } else {
-        setLoggedIn(false)
+        send({ type: 'GO_TO_LOG_IN_VIEW' })
       }
     })
-  }, [])
+  }, [auth, send])
+
+  const loading =
+    state.matches('loadingAuth') ||
+    state.matches('loggingIn') ||
+    state.matches('signingUp') ||
+    state.matches('loggingOut')
+  const logInView = state.matches('logInView')
+  const idle = state.matches('idle')
+  const signUpView = state.matches('signUpView')
 
   return (
-    <div className="bg-yellow-900	opacity-50 min-h-screen flex items-center justify-center ">
-      {loggedIn ? (
-        <h1>logged in</h1>
-      ) : (
-        <div>
-          <h1 className="text-white text-center mb-10 sm:mb-20">
-            Welcome to Anna's wonderland
-          </h1>
-          <div className="h-1/2 w-3/4 flex flex-col border-2 rounded-3xl px-8 py-10 sm:py-20 m-auto">
-            <p className="text-white text-lg">Login</p>
-            <input
-              className="h-8 rounded-3xl p-4 my-2"
-              placeholder="mail"
-              onChange={handleMailInput}
-            />
-            <input
-              className="h-8 rounded-3xl p-4 my-2"
-              placeholder="password"
-              onChange={handlePasswordInput}
-            />
-            <div className="flex w-full justify-end">
-              <button
-                className="bg-white font-bold w-max px-4 rounded-3xl border-2 text-yellow-900"
-                onClick={handleLogin}
-              >
-                Log in
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+    <div className="bg-green opacity-50 min-h-screen flex items-center justify-center ">
+      {loading && <LoadingIcon />}
+      {logInView && <LogInView send={send} />}
+      {signUpView && <SignUpView send={send} />}
+      {idle && <AccountPage send={send} />}
     </div>
   )
 }
