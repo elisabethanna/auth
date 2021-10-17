@@ -1,4 +1,3 @@
-import { Auth } from '@firebase/auth'
 import React from 'react'
 import { Button } from './Button'
 import { MachineType } from './machine'

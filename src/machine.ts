@@ -106,7 +106,9 @@ export const machine = (auth: Auth) =>
         loggingOut: () =>
           signOut(auth)
             .then(() => console.log('signing out'))
-            .catch((error) => console.log(error.message)),
+            .catch((error) => {
+              throw error.message
+            }),
 
         loggingIn: (ctx) =>
           signInWithEmailAndPassword(auth, ctx.logInEmail, ctx.logInPassword)
@@ -114,7 +116,7 @@ export const machine = (auth: Auth) =>
               console.log('logging in')
             })
             .catch((error) => {
-              console.log(error.message)
+              throw error.message
             }),
 
         signingUp: (ctx) =>
@@ -130,7 +132,7 @@ export const machine = (auth: Auth) =>
               // ...
             })
             .catch((error) => {
-              console.log(error.message)
+              throw error.message
             }),
       },
     }

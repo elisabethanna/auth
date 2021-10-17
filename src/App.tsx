@@ -40,6 +40,7 @@ function App() {
   const logInView = state.matches('logInView')
   const idle = state.matches('idle')
   const signUpView = state.matches('signUpView')
+  const errorView = state.matches('errorView')
 
   return (
     <div className="bg-green opacity-50 min-h-screen flex items-center justify-center ">
@@ -47,6 +48,7 @@ function App() {
       {logInView && <LogInView send={send} />}
       {signUpView && <SignUpView send={send} />}
       {idle && <AccountPage send={send} />}
+      {errorView && <h1 className="text-white"> Oops something happened...</h1>}
     </div>
   )
 }
