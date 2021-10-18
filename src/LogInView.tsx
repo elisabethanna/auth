@@ -35,7 +35,7 @@ export const LogInView = ({ send }: { send: MachineType['send'] }) => {
           <Button label="Log in" handleOnClick={handleLogin} />
         </div>
         <p
-          className="text-sm pt-8 flex justify-center text-white font-bold cursor-pointer"
+          className="text-sm mt-8 flex justify-center text-white font-bold cursor-pointer"
           onClick={handleClickOnSignUpText}
         >
           Sign up for Firebase Auth Application
